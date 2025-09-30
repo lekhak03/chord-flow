@@ -9,7 +9,7 @@ import ProgressionCreator from './components/ProgressionCreator';
 import ChordSelector from './components/ChordSelector';
 import StrummingPatternSelector from './components/StrummingPatternSelector';
 import { ChordProgression, Chord } from './types';
-import { startAudio, closeAudio } from './utils/audioHandle'
+import { startAudio, closeAudio, getFreqArray } from './utils/audioHandle'
 
 function App() {
   const [currentProgression, setCurrentProgression] = useState<ChordProgression | null>(null);
@@ -44,17 +44,6 @@ function App() {
     }
   }, []);
 
-  // Simulate beat progression
-  // useEffect(() => {
-  //   if (isPlaying && currentProgression) {
-  //     const interval = setInterval(() => {
-  //       setCurrentBeat((prev) => (prev + 1) % currentProgression.strummingPattern.length);
-  //     }, 600);
-  //     return () => clearInterval(interval);
-  //   }
-  // }, [isPlaying, currentProgression]);
-
-  // Simulate chord recognition
   useEffect(() => {
     if (isListening && currentProgression) {
       const timeout = setTimeout(() => {
@@ -79,29 +68,18 @@ function App() {
     }
   };
 
-  // const toggleMicrophone = () => {
-  //   if (!micEnabled) {
-  //     getMediaObject();
-  //     setMicEnabled(true);
-  //     setIsPlaying(true);
-  //   } else {
-  //     setIsListening(!isListening);
-  //   }
-  // };
-
   const toggleMicrophone = () => {
     setMicEnabled(prev => !prev);
   };
 
 useEffect(() => {
   if (micEnabled) {
-    console.log("RAN IF")
     startAudio();
   }
   else {
-    console.log("RAN ELSE")
     closeAudio(); 
   }
+  getFreqArray();
 
 }, [micEnabled]);
 
