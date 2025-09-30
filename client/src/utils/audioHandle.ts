@@ -1,12 +1,13 @@
 let audioContext: AudioContext | null = null;
 let analyser: AnalyserNode | null = null;
-let dataArray: Uint8Array | null = null;
+let dataArray = new Uint8Array(0);
 let animationId: number | null = null;
 let stream: MediaStream | null = null;
 
+export let recordedFrequencyArray: number[][] = [];
+
 export async function startAudio() {
   try {
-    console.log("RAN TRY")
     stream = await navigator.mediaDevices.getUserMedia({ audio: true });
     audioContext = new AudioContext();
     const source = audioContext.createMediaStreamSource(stream);
@@ -18,9 +19,9 @@ export async function startAudio() {
     dataArray = new Uint8Array(bufferLength);
 
     function logFrequencyData() {
-      if (!analyser || !dataArray) return;
+      if (!analyser) return;
       analyser.getByteFrequencyData(dataArray);
-      console.log(dataArray);
+      recordedFrequencyArray.push([...dataArray]);
       animationId = requestAnimationFrame(logFrequencyData);
     }
 
@@ -47,5 +48,10 @@ export function closeAudio() {
   }
 
   analyser = null;
-  dataArray = null;
+  dataArray = new Uint8Array(0);
+}
+
+
+export const getFreqArray = () => {
+  console.log(recordedFrequencyArray)
 }
